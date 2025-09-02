@@ -1,14 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import MessageInput from "./MessageInput";
 
 export default function ChatWindow({ username }) {
-  const [messages, setMessages] = useState([
-    { from: "System", text: "Welcome to YeahChat 🚀" },
-  ]);
+  const [messages, setMessages] = useState([]);
+  const [ws, setWs] = useState(null);
+
+  useEffect(() => {
+    const socket = new WebSocket(import.meta.env.VITE_WS_URL);
+    setWs(socket);
+
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === "chat") {
+        setMessages((prev) => [...prev, { from: data.from, text: data.text }]);
+      }
+    };
+
+    return () => socket.close();
+  }, []);
 
   const handleSend = (text) => {
-    if (text.trim()) {
-      setMessages([...messages, { from: username, text }]);
+    if (ws && ws.readyState === 1) {
+      ws.send(JSON.stringify({ type: "chat", from: username, text }));
     }
   };
 
@@ -30,7 +43,9 @@ export default function ChatWindow({ username }) {
                   : "bg-gray-300 text-gray-800"
               }`}
             >
-              <strong>{msg.from !== username ? msg.from + ": " : ""}</strong>
+              <strong>
+                {msg.from !== username ? msg.from + ": " : ""}
+              </strong>
               {msg.text}
             </span>
           </div>
