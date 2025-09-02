@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom"; // <- import Link
 
 export default function LandingPage() {
   const [userCount, setUserCount] = useState(0);
@@ -25,12 +26,13 @@ export default function LandingPage() {
         <p className="text-xl">👥 {userCount} people online now</p>
       </div>
 
-      <a
-        href="/login"
+      {/* Use Link instead of a */}
+      <Link
+        to="/login"
         className="px-6 py-3 bg-white text-purple-700 rounded-2xl shadow-lg font-semibold hover:bg-purple-100 transition"
       >
         Get Started
-      </a>
+      </Link>
     </div>
   );
 }
