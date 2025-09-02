@@ -13,23 +13,24 @@ export default function LandingPage() {
       }
     };
 
-    return () => {
-      ws.close();
-    };
+    return () => ws.close();
   }, []);
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-purple-600 to-blue-500 text-white text-center">
-      <h1 className="text-5xl font-bold mb-6">Welcome to YeahChat 🚀</h1>
-      <p className="text-lg mb-4">A place to chat instantly with anyone, anywhere.</p>
+      <h1 className="text-5xl font-bold mb-4">Welcome to YeahChat 🚀</h1>
+      <p className="text-lg mb-6">Connect instantly. Chat freely.</p>
 
-      <div className="bg-white/10 backdrop-blur-md px-6 py-4 rounded-2xl shadow-lg mb-6">
+      <div className="bg-white/10 px-6 py-4 rounded-2xl shadow-lg mb-6">
         <p className="text-xl">👥 {userCount} people online now</p>
       </div>
 
-      <button className="px-6 py-3 bg-white text-purple-700 rounded-2xl shadow-lg font-semibold hover:bg-purple-100 transition">
-        Start Chatting
-      </button>
+      <a
+        href="/login"
+        className="px-6 py-3 bg-white text-purple-700 rounded-2xl shadow-lg font-semibold hover:bg-purple-100 transition"
+      >
+        Get Started
+      </a>
     </div>
   );
 }
