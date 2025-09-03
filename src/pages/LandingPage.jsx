@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom"; // <- import Link
+import { Link } from "react-router-dom";
 
 export default function LandingPage() {
   const [userCount, setUserCount] = useState(0);
@@ -18,18 +18,23 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-purple-600 to-blue-500 text-white text-center">
-      <h1 className="text-5xl font-bold mb-4">Welcome to YeahChat 🚀</h1>
-      <p className="text-lg mb-6">Connect instantly. Chat freely.</p>
+    <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white text-center p-6">
+      <h1 className="text-6xl font-extrabold mb-4 drop-shadow-lg">
+        YeahChat 🚀
+      </h1>
+      <p className="text-lg mb-8 opacity-90">
+        A simple, fast and fun way to chat with friends.
+      </p>
 
-      <div className="bg-white/10 px-6 py-4 rounded-2xl shadow-lg mb-6">
-        <p className="text-xl">👥 {userCount} people online now</p>
+      <div className="bg-white/10 px-8 py-5 rounded-2xl shadow-xl backdrop-blur-md mb-8">
+        <p className="text-2xl font-semibold">
+          👥 {userCount} {userCount === 1 ? "person" : "people"} online now
+        </p>
       </div>
 
-      {/* Use Link instead of a */}
       <Link
         to="/login"
-        className="px-6 py-3 bg-white text-purple-700 rounded-2xl shadow-lg font-semibold hover:bg-purple-100 transition"
+        className="px-8 py-3 bg-white text-purple-700 rounded-2xl shadow-lg font-bold text-lg hover:bg-purple-100 hover:scale-105 transform transition duration-300"
       >
         Get Started
       </Link>
