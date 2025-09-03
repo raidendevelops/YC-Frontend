@@ -1,14 +1,16 @@
 import { useState } from "react";
 
 export default function LoginPage() {
-  const [mode, setMode] = useState("login"); // "login" or "signup"
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [mode, setMode] = useState("login"); // toggle login/signup
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
       const response = await fetch(
@@ -20,35 +22,42 @@ export default function LoginPage() {
         }
       );
 
-      const data = await response.json();
+      const raw = await response.text();
+      let data;
+      try {
+        data = JSON.parse(raw);
+      } catch {
+        throw new Error("Server returned non-JSON: " + raw.slice(0, 100));
+      }
 
       if (!response.ok) {
         setError(data.error || "Something went wrong");
-        return;
+      } else {
+        // store username in localStorage
+        localStorage.setItem("username", username);
+        window.location.href = "/dashboard";
       }
-
-      // success → store username and redirect
-      localStorage.setItem("username", username);
-      window.location.href = "/dashboard";
     } catch (err) {
-      console.error(err);
-      setError("Server error. Try again later.");
+      console.error("Request failed:", err);
+      setError("Unable to connect to server");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-600 to-blue-500">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-2xl shadow-lg w-96"
+        className="bg-white p-8 rounded-2xl shadow-md w-96"
       >
-        <h2 className="text-3xl font-bold mb-6 text-center text-purple-700">
-          {mode === "login" ? "Login" : "Sign Up"} to YeahChat
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
+          {mode === "login" ? "Login to YeahChat" : "Sign up for YeahChat"}
         </h2>
 
         <input
           type="text"
-          placeholder="Username"
+          placeholder="Enter your username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           className="w-full px-4 py-2 border rounded-xl mb-4 focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -56,7 +65,7 @@ export default function LoginPage() {
 
         <input
           type="password"
-          placeholder="Password"
+          placeholder="Enter your password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="w-full px-4 py-2 border rounded-xl mb-4 focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -68,19 +77,24 @@ export default function LoginPage() {
 
         <button
           type="submit"
-          className="w-full bg-purple-600 text-white py-2 rounded-xl font-semibold hover:bg-purple-700 transition"
+          disabled={loading}
+          className="w-full bg-purple-600 text-white py-2 rounded-xl font-semibold hover:bg-purple-700 transition disabled:opacity-50"
         >
-          {mode === "login" ? "Login" : "Sign Up"}
+          {loading
+            ? "Please wait..."
+            : mode === "login"
+            ? "Login"
+            : "Sign Up"}
         </button>
 
-        <p className="mt-4 text-center text-sm text-gray-600">
-          {mode === "login" ? "New here?" : "Already have an account?"}{" "}
+        <p className="text-sm text-gray-600 mt-4 text-center">
+          {mode === "login" ? "Don't have an account?" : "Already have an account?"}{" "}
           <button
             type="button"
-            onClick={() => setMode(mode === "login" ? "signup" : "login")}
             className="text-purple-600 font-semibold hover:underline"
+            onClick={() => setMode(mode === "login" ? "signup" : "login")}
           >
-            {mode === "login" ? "Create an account" : "Login"}
+            {mode === "login" ? "Sign up" : "Login"}
           </button>
         </p>
       </form>
